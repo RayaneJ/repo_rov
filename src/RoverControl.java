@@ -1,8 +1,10 @@
-
+import exceptions.MsgNotValidException;
+import exceptions.OutOfPlateauException;
 
 public class RoverControl {
 
-	public Rover controlRover(int platPosition, Rover rover, String nasaMsg) {
+	public Rover controlRover(int platPosition, Rover rover, String nasaMsg)
+			throws MsgNotValidException, OutOfPlateauException {
 
 		for (char letter : nasaMsg.toCharArray()) {
 			if (letter == 'L' || letter == 'R') {
@@ -10,16 +12,21 @@ public class RoverControl {
 
 			} else if (letter == 'M') {
 
-				rover = moveRover(rover, letter);
+				rover = moveRover(rover, letter, platPosition);
 			}
 		}
 
+		if (rover.getX() > platPosition || rover.getY() > platPosition) {
+			throw new OutOfPlateauException("rover position can't be out of plateau ");
+		}
 		return rover;
 	}
 
-	public Rover changeCardinalPoint(Rover rover, char direction) {
+	public Rover changeCardinalPoint(Rover rover, char direction) throws MsgNotValidException {
 
 		char ccPoint = rover.getCcpoint();
+
+		// Left : N -> W -> S -> E -> N
 		if (direction == 'L') {
 
 			if (ccPoint == 'N') {
@@ -35,6 +42,8 @@ public class RoverControl {
 
 		}
 
+		// Right : N -> E -> S -> W -> N
+
 		else if (direction == 'R') {
 
 			if (ccPoint == 'N') {
@@ -49,15 +58,19 @@ public class RoverControl {
 				rover.setCcpoint('N');
 			}
 
+		} else {
+			throw new MsgNotValidException("Nasa mrssage is incorrect");
 		}
 
 		return rover;
 	}
 
-	public Rover moveRover(Rover rover, char lettre) {
+	public Rover moveRover(Rover rover, char lettre, int platPosition) throws OutOfPlateauException {
 
 		int x = rover.getX();
 		int y = rover.getY();
+
+		// N : y+1 , S: y-1 , E : x+1 , W : x -1
 
 		if (rover.getCcpoint() == 'N') {
 
@@ -69,6 +82,10 @@ public class RoverControl {
 			rover.setX(x + 1);
 		} else if (rover.getCcpoint() == 'W') {
 			rover.setX(x - 1);
+		}
+
+		if (rover.getX() > platPosition || rover.getY() > platPosition) {
+			throw new OutOfPlateauException("rover position can't be out of plateau ");
 		}
 		return rover;
 	}
