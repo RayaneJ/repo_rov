@@ -13,6 +13,8 @@ public class RoverControl {
 			} else if (letter == 'M') {
 
 				rover = moveRover(rover, letter, platPosition);
+			} else {
+				throw new MsgNotValidException("Nasa message is incorrect");
 			}
 		}
 
@@ -58,8 +60,6 @@ public class RoverControl {
 				rover.setCcpoint('N');
 			}
 
-		} else {
-			throw new MsgNotValidException("Nasa mrssage is incorrect");
 		}
 
 		return rover;
